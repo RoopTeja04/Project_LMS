@@ -2,10 +2,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const User = require("./Models/User");
 const jwt = require("jsonwebtoken");
+const cors = require("cors");
 
 const JWT_SECRET = "SecretCode";
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/", (req, res) => {
     res.send("The Server is Running Properly");
@@ -30,19 +32,19 @@ app.post("/createAccount", async (req, res) => {
 })
 
 app.post("/login", async (req, res) => {
-    try{
+    try {
         const { emailID, password } = req.body;
 
-        if(!emailID && !password){
+        if (!emailID || !password) {
             return res.status(400).json({ message: "Email and password are required" });
         }
 
         const userData = await User.findOne({ emailID });
 
-        if(!userData) 
+        if (!userData)
             return res.status(404).json({ message: "Invalid E-Mail ID" });
 
-        if(userData.password !== password)
+        if (userData.password !== password)
             return res.status(401).json({ message: "Invalid Password" });
 
         const jwtToken = jwt.sign(
@@ -51,9 +53,14 @@ app.post("/login", async (req, res) => {
             { expiresIn: "1h" }
         );
 
-        return res.status(200).json({ message: "Login Successful", jwtToken })
+        return res.status(200).json({
+            message: "Login Successful",
+            jwtToken,
+            role: userData.role,
+            id: userData._id,
+        })
     }
-    catch(err){
+    catch (err) {
         console.log(err);
         return res.status(500).json({ message: "Internal server error" });
     }
