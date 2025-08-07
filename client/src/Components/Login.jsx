@@ -71,10 +71,10 @@ const Login = () => {
                         }
                     </button>
                 </div>
-                <p>Forgot Password?</p>
+                <p >Forgot Password?</p>
                 <button onClick={handleLogin}>Login</button>
                 <p>or</p>
-                <button >Create Account</button>
+                <button onClick={() => navigate("create-Account")} >Create Account</button>
             </div>
         </>
     )
