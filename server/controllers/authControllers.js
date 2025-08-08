@@ -1,11 +1,11 @@
-const bcrypt  = require("bcryptjs")
+const bcrypt = require("bcryptjs")
 const User = require("../Models/User");
 const JWT = require("jsonwebtoken");
 
 const JWT_Token = "MY_Secret_Code"
 
 const generateToken = (id) => {
-    return JWT.sign({id}, JWT_Token, {expiresIn: '2h'});
+    return JWT.sign({ id }, JWT_Token, { expiresIn: '2h' });
 };
 
 exports.CreateAccount = async (req, res) => {
@@ -14,11 +14,11 @@ exports.CreateAccount = async (req, res) => {
         firstName, lastName, emailID, passWord, role
     } = req.body
 
-    try{
+    try {
 
         const userEmail = await User.findOne({ emailID });
 
-        if(userEmail)
+        if (userEmail)
             return res.status(400).json({ message: "User Already Exist!" });
 
         const user = await User.create({ firstName, lastName, emailID, passWord, role })
@@ -33,7 +33,7 @@ exports.CreateAccount = async (req, res) => {
         })
 
     }
-    catch (err){
+    catch (err) {
         console.error(err)
         res.status(500).json({ message: "Server Down" })
     }
@@ -43,27 +43,28 @@ exports.Login = async (req, res) => {
 
     const { emailID, passWord } = req.body;
 
-    try{
+    try {
 
         const UserEmail = await User.findOne({ emailID });
 
-        if(!UserEmail)
+        if (!UserEmail)
             return res.status(400).json({ message: "Invalid Email" });
 
-        const UserPassword = await bcrypt .compare(passWord, UserEmail.passWord);
+        const UserPassword = await bcrypt.compare(passWord, UserEmail.passWord);
 
-        if(!UserPassword)
+        if (!UserPassword)
             return res.status(400).json({ message: "Invalid Password" });
 
         res.status(200).json({
             firstName: UserEmail.firstName,
-            token : generateToken(UserEmail._id)
+            role: UserEmail.role,
+            token: generateToken(UserEmail._id)
         });
 
     }
-    catch(err) {
+    catch (err) {
         console.error(err)
         return res.status(500).json({ message: "Server Down" })
     }
- 
+
 }

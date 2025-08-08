@@ -7,7 +7,7 @@ const Login = () => {
 
     const navigate = useNavigate();
 
-    const DefaultValues = { emailID: "", password: "" }
+    const DefaultValues = { emailID: "", passWord: "" }
 
     const [visible, setVisible] = useState(false);
     const [userDetails, setUserDetails] = useState(DefaultValues);
@@ -19,9 +19,9 @@ const Login = () => {
     const handleLogin = async () => {
 
         try {
-            const response = await axios.post("http://localhost:5000/login", {
+            const response = await axios.post("http://localhost:5000/auth/login", {
                 emailID: userDetails.emailID,
-                password: userDetails.password,
+                passWord: userDetails.passWord,
             })
 
             const data = response.data;
@@ -59,8 +59,8 @@ const Login = () => {
                         type={visible ? "text" : "password"}
                         className='bg-none border-b-2 outline-none px-2 py-2'
                         placeholder='password'
-                        value={userDetails.password}
-                        onChange={(e) => setUserDetails({ ...userDetails, password: e.target.value })}
+                        value={userDetails.passWord}
+                        onChange={(e) => setUserDetails({ ...userDetails, passWord: e.target.value })}
                     />
                     <button
                         className='absolute top-28 left-82 cursor-pointer'
